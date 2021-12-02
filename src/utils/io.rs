@@ -12,20 +12,15 @@ pub fn read_vec_from_file<T: FromStr>(path: &Path) -> io::Result<Vec<T>> {
     let mut reader = open_file_read(path)?;
     let mut res = Vec::new();
 
-    loop {
-        let mut buff = String::new();
-        match reader.read_line(&mut buff) {
-            Ok(0) => break,
-            Err(_) => break,
-            Ok(_) => {
-                res.push(buff.trim().parse().map_err(|_e| {
-                    io::Error::new(
-                        io::ErrorKind::InvalidData,
-                        format!("Invalid data: {}", buff),
-                    )
-                })?);
-            }
-        }
+    for line in reader.lines() {
+        let line = line?;
+        res.push(line.trim().parse().map_err(|_e| {
+            io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!("Invalid data: {}", line),
+            )
+        })?);
     }
+
     Ok(res)
 }
