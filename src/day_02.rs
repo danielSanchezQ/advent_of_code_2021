@@ -20,39 +20,80 @@ impl FromStr for Command {
     }
 }
 
+trait Day2Solver {
+    fn compute_command(&mut self, command: &Command);
+    fn compute_solution(&self) -> i32;
+}
+
 struct Position {
-    x: i32,
-    y: i32,
+    horizontal: i32,
+    depth: i32,
 }
 
 impl Position {
     pub fn new() -> Self {
-        Self { x: 0, y: 0 }
+        Self {
+            horizontal: 0,
+            depth: 0,
+        }
     }
+}
 
-    pub fn compute_command(&mut self, command: &Command) {
+impl Day2Solver for Position {
+    fn compute_command(&mut self, command: &Command) {
         match command {
             Command::Forward(x) => {
-                self.x += x;
+                self.horizontal += x;
             }
             Command::Down(y) | Command::Up(y) => {
-                self.y += y;
+                self.depth += y;
             }
         }
     }
 
-    pub fn compute_solution(&self) -> i32 {
-        self.x * self.y
+    fn compute_solution(&self) -> i32 {
+        self.horizontal * self.depth
     }
 }
 
-fn solve_position_part_1(commands: &[Command]) -> i32 {
-    let position: Position = commands
-        .into_iter()
-        .fold(Position::new(), |mut position, command| {
+struct Aimed {
+    position: Position,
+    aim: i32,
+}
+
+impl Aimed {
+    pub fn new() -> Self {
+        Self {
+            position: Position::new(),
+            aim: 0,
+        }
+    }
+}
+
+impl Day2Solver for Aimed {
+    fn compute_command(&mut self, command: &Command) {
+        match command {
+            Command::Forward(x) => {
+                self.position.horizontal += x;
+                self.position.depth += self.aim * x;
+            }
+            Command::Down(aim) | Command::Up(aim) => {
+                self.aim += aim;
+            }
+        }
+    }
+
+    fn compute_solution(&self) -> i32 {
+        self.position.compute_solution()
+    }
+}
+
+fn solve_position_with_solver<Solver: Day2Solver>(solver: Solver, commands: &[Command]) -> i32 {
+    let position: Box<dyn Day2Solver> =
+        Box::new(commands.into_iter().fold(solver, |mut position, command| {
             position.compute_command(command);
             position
-        });
+        }));
     position.compute_solution()
 }
 
@@ -63,7 +104,7 @@ mod test {
     use std::path::PathBuf;
 
     #[test]
-    fn example() {
+    fn example_part_1() {
         let input = vec![
             Command::Forward(5),
             Command::Down(5),
@@ -72,14 +113,41 @@ mod test {
             Command::Down(8),
             Command::Forward(2),
         ];
-        assert_eq!(solve_position_part_1(&input), 150);
+        assert_eq!(solve_position_with_solver(Position::new(), &input), 150);
     }
 
     #[test]
     fn part_1() -> std::io::Result<()> {
         let input: Vec<Command> =
             io::read_vec_from_file(&PathBuf::from_str("./inputs/day_02.txt").unwrap())?;
-        println!("Day 2 part 1 result: {}", solve_position_part_1(&input));
+        println!(
+            "Day 2 part 1 result: {}",
+            solve_position_with_solver(Position::new(), &input)
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn example_part_2() {
+        let input = vec![
+            Command::Forward(5),
+            Command::Down(5),
+            Command::Forward(8),
+            Command::Up(-3),
+            Command::Down(8),
+            Command::Forward(2),
+        ];
+        assert_eq!(solve_position_with_solver(Aimed::new(), &input), 900);
+    }
+
+    #[test]
+    fn part_2() -> std::io::Result<()> {
+        let input: Vec<Command> =
+            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_02.txt").unwrap())?;
+        println!(
+            "Day 2 part 2 result: {}",
+            solve_position_with_solver(Aimed::new(), &input)
+        );
         Ok(())
     }
 }
