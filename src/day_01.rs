@@ -57,7 +57,7 @@ fn count_increased_measure_sliding_windows(measures: &[usize], windows_size: usi
 
 #[cfg(test)]
 mod test {
-    use crate::day_1::{count_increased_measure_sliding_windows, count_increased_measures};
+    use crate::day_01::{count_increased_measure_sliding_windows, count_increased_measures};
     use crate::utils::io;
     use std::path::PathBuf;
     use std::str::FromStr;
@@ -71,34 +71,34 @@ mod test {
     #[test]
     fn part_1() -> std::io::Result<()> {
         let data: Vec<usize> =
-            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_1.txt").unwrap())?;
+            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_01.txt").unwrap())?;
         assert_ne!(data.len(), 0);
 
         let result = count_increased_measures(data.iter(), 1);
-        print!("Day 1, part 1 result: {}", result);
+        println!("Day 1, part 1 result: {}", result);
         Ok(())
     }
 
     #[test]
     fn part_2() -> std::io::Result<()> {
         let data: Vec<usize> =
-            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_1.txt").unwrap())?;
+            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_01.txt").unwrap())?;
         assert_ne!(data.len(), 0);
 
         let result = count_increased_measure_sliding_windows(&data, 3);
-        print!("Day 1, part 2 result: {}", result);
+        println!("Day 1, part 2 result: {}", result);
         Ok(())
     }
 
     #[test]
     fn part_2_v2() -> std::io::Result<()> {
         let data: Vec<usize> =
-            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_1.txt").unwrap())?;
+            io::read_vec_from_file(&PathBuf::from_str("./inputs/day_01.txt").unwrap())?;
         assert_ne!(data.len(), 0);
 
         let result = count_increased_measures(data.iter(), 3);
         assert_eq!(result, count_increased_measure_sliding_windows(&data, 3));
-        print!("Day 1, part 2 result: {}", result);
+        println!("Day 1, part 2 result: {}", result);
         Ok(())
     }
 }

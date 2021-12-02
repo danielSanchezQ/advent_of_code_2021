@@ -1,6 +1,8 @@
 #![feature(bool_to_option)]
 
-mod day_1;
+mod day_01;
+mod day_02;
+
 mod utils;
 
 fn main() {
