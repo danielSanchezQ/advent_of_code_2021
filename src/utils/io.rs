@@ -9,7 +9,7 @@ pub fn open_file_read(path: &Path) -> io::Result<impl BufRead> {
 }
 
 pub fn read_vec_from_file<T: FromStr>(path: &Path) -> io::Result<Vec<T>> {
-    let mut reader = open_file_read(path)?;
+    let reader = open_file_read(path)?;
     let mut res = Vec::new();
 
     for line in reader.lines() {
