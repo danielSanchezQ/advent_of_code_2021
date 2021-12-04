@@ -90,7 +90,7 @@ impl Day2Solver for Aimed {
 
 fn solve_position_with_solver<Solver: Day2Solver>(solver: Solver, commands: &[Command]) -> i32 {
     let position: Box<dyn Day2Solver> =
-        Box::new(commands.into_iter().fold(solver, |mut position, command| {
+        Box::new(commands.iter().fold(solver, |mut position, command| {
             position.compute_command(command);
             position
         }));

@@ -79,7 +79,7 @@ fn find_common_in_column<const SIZE: usize>(
 
 fn find_common_uncommon<const SIZE: usize>(entries: &[Entry<SIZE>]) -> (Entry<SIZE>, Entry<SIZE>) {
     let common: Vec<u8> = (0..SIZE)
-        .map(|i| find_common_in_column(&entries, i, 1, true))
+        .map(|i| find_common_in_column(entries, i, 1, true))
         .collect();
     let common: Entry<SIZE> = Entry::try_from(common).unwrap();
     let uncommon = common.reverse();
