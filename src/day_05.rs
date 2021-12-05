@@ -79,9 +79,7 @@ fn solve(lines: &[Line], free: bool, threshold: usize) -> usize {
                     *grid.entry((next_x, next_y)).or_default() += 1;
                 }
             }
-            _ => {
-                unreachable!()
-            }
+            _ => {}
         }
     }
     grid.values().filter(|v| **v >= threshold).count()
