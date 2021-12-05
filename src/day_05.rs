@@ -56,9 +56,7 @@ fn reverse_inverse_range(range: &RangeInclusive<usize>) -> Box<dyn Iterator<Item
     if range.start() < range.end() {
         Box::new(range.clone().into_iter())
     } else {
-        let mut v: Vec<usize> = (*range.end()..=*range.start()).collect();
-        v.reverse();
-        Box::new(v.into_iter())
+        Box::new((*range.end()..=*range.start()).rev())
     }
 }
 
