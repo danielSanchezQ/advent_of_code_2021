@@ -54,7 +54,7 @@ impl FromStr for Line {
 
 fn reverse_inverse_range(range: &RangeInclusive<usize>) -> Box<dyn Iterator<Item = usize>> {
     if range.start() < range.end() {
-        Box::new(range.clone().into_iter())
+        Box::new(range.clone())
     } else {
         Box::new((*range.end()..=*range.start()).rev())
     }
