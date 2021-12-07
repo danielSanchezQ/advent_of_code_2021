@@ -21,8 +21,7 @@ fn solve_part_1(positions: &[usize]) -> (usize, usize) {
 }
 
 fn solve_part_2(positions: &[usize]) -> (usize, usize) {
-    // it would be better to cache the fuel calculations, but laziness
-    solve(positions, |i| (1..=i).sum())
+    solve(positions, |i| i * (i + 1) / 2)
 }
 
 #[cfg(test)]
