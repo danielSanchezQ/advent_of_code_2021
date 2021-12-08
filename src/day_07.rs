@@ -3,7 +3,6 @@ use std::collections::HashMap;
 fn solve(positions: &[usize], mut calc_fuel: impl FnMut(usize) -> usize) -> (usize, usize) {
     let max = *positions.iter().max().unwrap();
     let mut map: HashMap<usize, usize> = (0..max).zip(std::iter::repeat(0usize)).collect();
-    let len = positions.len();
     for &a in positions {
         for b in 0..max {
             let diff = calc_fuel(a.abs_diff(b));
@@ -11,7 +10,7 @@ fn solve(positions: &[usize], mut calc_fuel: impl FnMut(usize) -> usize) -> (usi
         }
     }
     map.iter()
-        .min_by_key(|(pos, fuel)| **fuel)
+        .min_by_key(|(_pos, fuel)| **fuel)
         .map(|(&pos, &fuel)| (pos, fuel))
         .unwrap()
 }
