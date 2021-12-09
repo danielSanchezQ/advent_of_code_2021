@@ -24,13 +24,6 @@ const NUMBERS: Lazy<HashMap<String, usize>> =
 
 const SIZES: Lazy<[usize; 10]> = Lazy::new(|| DIGITS.clone().map(|set| set.len()));
 
-const COUNTS: Lazy<HashMap<char, usize>> = Lazy::new(|| {
-    "abcdefg"
-        .chars()
-        .map(|c| (c, DIGITS.iter().filter(|s| s.contains(&c)).count()))
-        .collect()
-});
-
 //  aaaa
 // b    c
 // b    c
