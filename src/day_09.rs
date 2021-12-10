@@ -139,7 +139,7 @@ fn solve_part_2(heatmap: &HeatMap) -> usize {
     let mut visited = HashSet::new();
     let mut basins: Vec<usize> = heatmap
         .low_points()
-        .map(|(e, (row, column))| 1 + heatmap.basin_at(row as isize, column as isize, &mut visited))
+        .map(|(_, (row, column))| 1 + heatmap.basin_at(row as isize, column as isize, &mut visited))
         .collect();
     basins.sort_unstable();
     basins.iter().rev().take(3).product()
