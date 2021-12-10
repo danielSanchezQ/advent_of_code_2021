@@ -92,6 +92,7 @@ fn solve_part_1(lines: &[Nssl]) -> usize {
     lines
         .iter()
         .map(|nssl| nssl.state())
+        .filter(|state| matches!(state, NsslState::Corrupted(_)))
         .map(|state| state.as_score())
         .sum()
 }
