@@ -168,13 +168,8 @@ mod test {
 
     #[test]
     fn part_1() -> std::io::Result<()> {
-        let heatmap: HeatMap = {
-            let mut reader =
-                io::open_file_read(&PathBuf::from_str("./inputs/day_09.txt").unwrap())?;
-            let mut buff = String::new();
-            reader.read_to_string(&mut buff)?;
-            buff.parse().unwrap()
-        };
+        let heatmap: HeatMap =
+            io::read_object_from_file(&PathBuf::from_str("./inputs/day_09.txt").unwrap())?;
         println!("Day 9 part 1 solution: {}", solve_part_1(&heatmap));
         Ok(())
     }
@@ -194,13 +189,8 @@ mod test {
 
     #[test]
     fn part_2() -> std::io::Result<()> {
-        let heatmap: HeatMap = {
-            let mut reader =
-                io::open_file_read(&PathBuf::from_str("./inputs/day_09.txt").unwrap())?;
-            let mut buff = String::new();
-            reader.read_to_string(&mut buff)?;
-            buff.parse().unwrap()
-        };
+        let heatmap: HeatMap =
+            io::read_object_from_file(&PathBuf::from_str("./inputs/day_09.txt").unwrap())?;
         println!("Day 9 part 2 solution: {}", solve_part_2(&heatmap));
         Ok(())
     }
