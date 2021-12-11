@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use std::ops::{AddAssign, IndexMut};
+use std::ops::AddAssign;
 use std::str::FromStr;
 
 static CHECKS: [(isize, isize); 8] = [
@@ -56,25 +56,31 @@ impl Matrix {
         Some(&mut self.0[row as usize][column as usize])
     }
 
-    fn get_surrounds(&self, row: usize, column: usize) -> impl Iterator<Item = u8> + '_ {
-        SurroundsIterator::new(self, row, column)
-    }
-
     fn inc(&mut self, value: u8) {
         self.0.iter_mut().for_each(|v| {
-            v.iter_mut().for_each(|mut e| {
+            v.iter_mut().for_each(|e| {
                 *e += value;
             })
         })
     }
 
-    fn flash_at(&mut self, row: isize, column: isize) -> usize {
-        self.get_mut(row, column).iter_mut().for_each(|e| **e += 1);
-        if Some(10) == self.get(row, column) {
-            CHECKS
-                .iter()
-                .map(|(r, c)| self.flash_at(row + r, column + c))
-                .sum()
+    fn flash_at(&mut self, row: isize, column: isize, inc: u8) -> usize {
+        if let Some(n) = self.get_mut(row, column) {
+            match n {
+                0 => 0,
+                i if *i > 9u8 => {
+                    *i = 0;
+                    1usize
+                        + CHECKS
+                            .iter()
+                            .map(|(r, c)| self.flash_at(row + r, column + c, 1))
+                            .sum::<usize>()
+                }
+                i => {
+                    *i += inc;
+                    0
+                }
+            }
         } else {
             0
         }
@@ -82,30 +88,12 @@ impl Matrix {
 
     fn flash(&mut self) -> usize {
         let mut ret = 0;
-        for row in 0..self.0.len() {
-            for column in 0..self.0[0].len() {
-                if self.0[row][column] > 9 {
-                    ret += self.flash_at(row as isize, column as isize);
-                }
+        for row in 0..self.0.len() as isize {
+            for column in 0..self.0[0].len() as isize {
+                ret += self.flash_at(row, column, 0);
             }
         }
         ret
-    }
-
-    fn count(&self) -> usize {
-        self.0
-            .iter()
-            .flat_map(|v| v.iter())
-            .filter(|n| **n > 9)
-            .count()
-    }
-
-    fn reset(&mut self) {
-        self.0.iter_mut().flat_map(|v| v.iter_mut()).for_each(|v| {
-            if *v > 9u8 {
-                *v = 0;
-            }
-        });
     }
 
     fn any_flash(&self) -> bool {
@@ -113,13 +101,21 @@ impl Matrix {
     }
 
     fn flash_count_reset(&mut self) -> usize {
-        self.flash();
         let mut ret = 0;
         while self.any_flash() {
-            ret += self.count();
-            self.reset();
+            ret += self.flash();
+            // self.reset();
         }
         ret
+    }
+
+    fn step(&mut self) -> usize {
+        self.inc(1);
+        self.flash_count_reset()
+    }
+
+    fn is_zero(&self) -> bool {
+        self.0.iter().flat_map(|v| v.iter()).all(|n| *n == 0)
     }
 }
 
@@ -189,20 +185,29 @@ impl FromStr for Matrix {
 }
 
 fn simulate(mut matrix: Matrix, steps: usize) -> usize {
-    (0..steps)
-        .map(|_| {
-            matrix.inc(1);
-            println!("{}", matrix);
-            let ret = matrix.flash_count_reset();
-            println!("{}", matrix);
-            ret
-        })
-        .sum()
+    (0..steps).map(|_| matrix.step()).sum()
+}
+
+fn solve_part_1(matrix: Matrix) -> usize {
+    simulate(matrix, 100)
+}
+
+fn solve_part_2(mut matrix: Matrix) -> usize {
+    for i in 1.. {
+        matrix.step();
+        if matrix.is_zero() {
+            return i;
+        }
+    }
+    unreachable!()
 }
 
 #[cfg(test)]
 mod test {
-    use crate::day_11::{simulate, Matrix};
+    use crate::day_11::{solve_part_1, solve_part_2, Matrix};
+    use crate::utils::io;
+    use std::path::PathBuf;
+    use std::str::FromStr;
 
     #[test]
     fn example_part_1() {
@@ -218,6 +223,39 @@ mod test {
 4846848554
 5283751526";
         let matrix: Matrix = input.parse().unwrap();
-        assert_eq!(simulate(matrix, 2), 1656);
+        assert_eq!(solve_part_1(matrix), 1656);
+    }
+
+    #[test]
+    fn part_1() -> std::io::Result<()> {
+        let matrix: Matrix =
+            io::read_object_from_file(&PathBuf::from_str("./inputs/day_11.txt").unwrap())?;
+        println!("Day 11 part 1 solution: {}", solve_part_1(matrix));
+        Ok(())
+    }
+
+    #[test]
+    fn example_part_2() {
+        let input = "\
+5483143223
+2745854711
+5264556173
+6141336146
+6357385478
+4167524645
+2176841721
+6882881134
+4846848554
+5283751526";
+        let matrix: Matrix = input.parse().unwrap();
+        assert_eq!(solve_part_2(matrix), 195);
+    }
+
+    #[test]
+    fn part_2() -> std::io::Result<()> {
+        let matrix: Matrix =
+            io::read_object_from_file(&PathBuf::from_str("./inputs/day_11.txt").unwrap())?;
+        println!("Day 11 part 2 solution: {}", solve_part_2(matrix));
+        Ok(())
     }
 }

@@ -149,7 +149,6 @@ fn solve_part_2(heatmap: &HeatMap) -> usize {
 mod test {
     use crate::day_09::{solve_part_1, solve_part_2, HeatMap};
     use crate::utils::io;
-    use std::io::Read;
     use std::path::PathBuf;
     use std::str::FromStr;
 
