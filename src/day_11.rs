@@ -141,17 +141,6 @@ struct SurroundsIterator<'matrix> {
     column: usize,
 }
 
-impl<'matrix> SurroundsIterator<'matrix> {
-    fn new(heatmap: &'matrix Matrix, row: usize, column: usize) -> Self {
-        Self {
-            matrix: heatmap,
-            checks: Box::new(CHECKS.iter()),
-            row,
-            column,
-        }
-    }
-}
-
 impl<'matrix> Iterator for SurroundsIterator<'matrix> {
     type Item = u8;
 
