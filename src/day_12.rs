@@ -27,7 +27,7 @@ impl Pathways {
         mut visited_counts: HashMap<String, usize>,
         mut previous: Vec<String>,
     ) -> Vec<Vec<String>> {
-        if from.to_ascii_lowercase() == from.to_string() {
+        if from.to_ascii_lowercase() == from {
             if let Some(&counter) = visited_counts.get(&from) {
                 if counter == 0 {
                     visited.insert(from.to_string());
