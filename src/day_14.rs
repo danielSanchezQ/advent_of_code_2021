@@ -70,7 +70,7 @@ impl Polymer {
 fn parse_input(mut reader: impl BufRead) -> (Polymer, Rules) {
     let mut buff = String::new();
     reader.read_to_string(&mut buff).unwrap();
-    let mut parts = buff.splitn(2, "\r\n\r\n");
+    let mut parts = buff.splitn(2, "\n\n");
     (
         parts.next().unwrap().parse().unwrap(),
         parts
@@ -117,13 +117,17 @@ fn solve_2(polymer: Polymer, rules: &Rules, iterations: usize) -> usize {
         };
     }
 
-    let aggregated_results: HashMap<char, usize> =
+    let mut aggregated_results: HashMap<char, usize> =
         results
             .iter()
             .fold(HashMap::new(), |mut map, (&(a, _b), &value)| {
                 *map.entry(a).or_default() += value;
                 map
             });
+
+    *aggregated_results
+        .entry(*polymer.0.last().unwrap())
+        .or_default() += 1;
 
     let (min, max) = (
         *aggregated_results
@@ -137,7 +141,7 @@ fn solve_2(polymer: Polymer, rules: &Rules, iterations: usize) -> usize {
             .unwrap()
             .1,
     );
-    max - min + 1
+    max - min
 }
 
 #[cfg(test)]
