@@ -77,7 +77,6 @@ fn exploit_y(
     max: isize,
     target_min: isize,
     target_max: isize,
-    max_t: usize,
 ) -> Vec<(isize, InitialVelocity, MaxT)> {
     (min..=max)
         .filter_map(|initial_velocity| {
@@ -91,9 +90,6 @@ fn exploit_y(
                     found = true;
                     break;
                 }
-                // if t > max_t {
-                //     break;
-                // }
                 if current_pos < target_max {
                     break;
                 }
@@ -113,27 +109,32 @@ fn exploit_y(
         .collect()
 }
 
-fn solve_part_1() -> isize {
+fn solve() -> (isize, usize) {
     let x_data = solve_x(1, 171, 150, 171);
     let max_t = x_data.iter().map(|(_, t)| *t).max().unwrap();
-    let y_data = exploit_y(1, 10000, -70, -130, max_t);
+    let y_data = exploit_y(1, 10000, -70, -129);
     println!("{:?}", x_data);
     println!("{:?}", y_data);
-    y_data.iter().map(|(m, _, _)| *m).max().unwrap()
-    // let diff = Y_RANGE.start.abs_diff(Y_RANGE.end);
-    // let starting_position = Y_RANGE.start.abs();
-    //
-    // println!("Diff {}, starting position {}", diff, starting_position);
-    // solve_y(&x_data, starting_position, diff, 1)
-    //     .into_iter()
-    //     .max()
-    //     .unwrap()
-    //     - starting_position
+    (
+        y_data.iter().map(|(m, _, _)| *m).max().unwrap(),
+        // TODO: sencond part is wrong approach
+        y_data
+            .iter()
+            .map(|(_, v, _)| *v)
+            .collect::<HashSet<_>>()
+            .len()
+            * x_data.iter().map(|(v, _)| *v).collect::<HashSet<_>>().len(),
+    )
+}
+
+//fancy tiny solver found on google :/
+fn solve_part_1_smart() -> isize {
+    (129 * (129 - 1)) / 2
 }
 
 #[cfg(test)]
 mod test {
-    use crate::day_17::{solve_part_1, solve_x};
+    use crate::day_17::{solve, solve_x};
 
     // #[test]
     // fn example_part_1() {
@@ -151,6 +152,6 @@ mod test {
 
     #[test]
     fn part_1() {
-        println!("Day 1 part 1 solution: {}", solve_part_1());
+        println!("Day 1 part 1 solution: {:?}", solve());
     }
 }
